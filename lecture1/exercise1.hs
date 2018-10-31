@@ -21,15 +21,24 @@ frame :: Picture
 frame = rectangle 4.5 7.5
 
 
-trafficLight :: Bool -> Bool -> Bool -> Picture
-trafficLight r a g = redCircle r & amberCircle a & greenCircle g & frame
+trafficSign :: Bool -> Bool -> Bool -> Picture
+trafficSign r a g = redCircle r & amberCircle a & greenCircle g & frame
+
+trafficLight :: [Color] -> Picture
+trafficLight c
+  | c == [red] = trafficSign True False False
+  | c == [yellow] = trafficSign False True False
+  | c == [green] = trafficSign False False True
+  | c == [red, yellow] = trafficSign True True False
+  | otherwise = trafficSign False False False
+
 
 trafficController :: Double -> Picture
 trafficController t
-  | time `elem` [0,1] = trafficLight False False True
-  | time == 2 = trafficLight False True False
-  | time `elem` [3,4] = trafficLight True False False
-  | otherwise = trafficLight True True False
+  | time `elem` [0,1] = trafficLight [green]
+  | time == 2 = trafficLight [yellow]
+  | time `elem` [3,4] = trafficLight [red]
+  | otherwise = trafficLight [red, yellow]
   where time = round (t/2) `mod` 6
 
 
